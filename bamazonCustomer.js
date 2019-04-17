@@ -49,12 +49,29 @@ var shopping = function () {
         connection.query("SELECT * FROM products WHERE item_id=?", selection, function (err, res) {
             if (err) throw err;
             if (res.length === 0) {
-                console.log("That is not a product, Try again!")
+                console.log("That is not a product, Try again!");
 
                 shopping();
             } else {
-                console.log("Added to cart!")
+                // console.log("Added to cart!");
+                inquirer.prompt({
+                    name: "quantity",
+                    type: "input",
+                    message: "How many would you like to purchase?"
+                }).then(function (ans2) {
+                    var quantity = ans2.quantity;
+                    if (quantity > res[0].stock_quantity) {
+                        console.log("Sorry we currently have " + res[0].stock_quantity + " of the items selected");
+                        shopping();
+                    } else {
+                        console.log(res[0].product_name + " Purchased");
+                        console.log(quantity + " items @ $" + res[0].price);
+
+
+                    }
+                })
             }
         })
+
     });
 }
