@@ -67,11 +67,18 @@ var shopping = function () {
                         console.log(res[0].product_name + " Purchased");
                         console.log(quantity + " items @ $" + res[0].price);
 
-
+                        var newQuantity = res[0].stock_quantity - quantity;
+                        connection.query(
+                            "UPDATE products SET stock_quantity = " + newQuantity + res[0].item_id, function (err, resUpdate) {
+                                if (err) throw err;
+                                console.log("Your Total Is $" + quantity * res[0].price);
+                                console.log("Your Order Has Been Placed!")
+                            }
+                        )
                     }
                 })
             }
         })
-
+        connection.end();
     });
 }
