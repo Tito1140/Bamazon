@@ -21,11 +21,40 @@ connection.connect(function (err) {
 
 function start() {
     connection.query("SELECT * FROM products", function (err, res) {
+        // var table = new Table({
+        //     head: ["ID", "Product Description", "Price", "Quantity"],
+        //     colWidths: [10, 45, 10, 10],
+        //     colAligns: ["center", "left", "center", "center"],
+        //     style: {
+        //         head: ["aqua"],
+        //         compact: true
+        //     }
+        // });
         for (var i = 0; i < res.length; i++) {
-            console.log(res[i].item_id + " | " + res[i].product_name + " | " + res[i].department_name + " | " + res[i].price + " | " + res[i].stock_quantity);
+            console.log(res[i].item_id + " | " + res[i].product_name + " | " + res[i].department_name + " | " + res[i].price);
         }
         console.log("---------------------------------------------------------");
+        shopping();
     });
-    connection.end();
+    // connection.end();
 }
 
+var shopping = function () {
+    inquirer.prompt({
+        name: "ProductToBuy",
+        type: "input",
+        message: "Enter product ID of item you would like to purchase!"
+    }).then(function (ans1) {
+        var selection = ans1.ProductToBuy;
+        connection.query("SELECT * FROM products WHERE item_id=?", selection, function (err, res) {
+            if (err) throw err;
+            if (res.length === 0) {
+                console.log("That is not a product, Try again!")
+
+                shopping();
+            } else {
+                console.log("Added to cart!")
+            }
+        })
+    });
+}
